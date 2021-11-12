@@ -35,7 +35,6 @@ jobs:
     runs-on: windows-latest
     outputs:
       telemetryScope: ${{ steps.init.outputs.telemetryScope }}
-      correlationId: ${{ steps.init.outputs.correlationId }}  
     steps:
       - id: init
         uses: PooyaKharamesh/AL-Go-Actions/InitWorkflow@main
@@ -60,6 +59,7 @@ jobs:
       - name: Check for updates to AL-Go system files
         uses: PooyaKharamesh/AL-Go-Actions/CheckForUpdates@main
         with:
+          parentTelemetryScope: ${{ needs.initialization.outputs.telemetryScope }}
           templateUrl: ${{ env.TemplateUrl }}
           templateBranch: ${{ env.TemplateBranch }}
 
@@ -95,6 +95,7 @@ jobs:
         id: createreleasenotes
         uses: PooyaKharamesh/AL-Go-Actions/CreateReleaseNotes@main
         with:
+          parentTelemetryScope: ${{ needs.initialization.outputs.telemetryScope }}
           tag_name: '${{github.event.inputs.tag}}'
 
       - name: Create release
@@ -130,6 +131,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
+          parentTelemetryScope: ${{ needs.initialization.outputs.telemetryScope }}
           upload_url: ${{ needs.createrelease.outputs.upload_url }}
           asset_path: '${{ matrix.name }}.zip'
           asset_name: '${{ matrix.name }}.zip'

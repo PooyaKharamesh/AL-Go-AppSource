@@ -24,7 +24,6 @@ jobs:
     runs-on: windows-latest
     outputs:
       telemetryScope: ${{ steps.init.outputs.telemetryScope }}
-      correlationId: ${{ steps.init.outputs.correlationId }}  
     steps:
       - id: init
         uses: PooyaKharamesh/AL-Go-Actions/InitWorkflow@main
@@ -47,6 +46,7 @@ jobs:
         env:
           secrets: ${{ toJson(secrets) }}
         with:
+          parentTelemetryScope: ${{ needs.initialization.outputs.telemetryScope }}
           settingsJson: ${{ env.Settings }}
           secrets: 'adminCenterApiCredentials'
 

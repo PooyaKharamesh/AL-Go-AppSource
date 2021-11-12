@@ -17,7 +17,6 @@ jobs:
     runs-on: windows-latest
     outputs:
       telemetryScope: ${{ steps.init.outputs.telemetryScope }}
-      correlationId: ${{ steps.init.outputs.correlationId }}  
     steps:
       - id: init
         uses: PooyaKharamesh/AL-Go-Actions/InitWorkflow@main
@@ -35,13 +34,16 @@ jobs:
       - name: Read settings
         uses: PooyaKharamesh/AL-Go-Actions/ReadSettings@main
         with:
+          parentTelemetryScope: ${{ needs.initialization.outputs.telemetryScope }}
           get: KeyVaultName,GhTokenWorkflowSecretName,TemplateUrl,TemplateBranch
 
       - name: Read secrets
         uses: PooyaKharamesh/AL-Go-Actions/ReadSecrets@main
         env:
+          parentTelemetryScope: ${{ needs.initialization.outputs.telemetryScope }}
           secrets: ${{ toJson(secrets) }}
         with:
+          parentTelemetryScope: ${{ needs.initialization.outputs.telemetryScope }}
           settingsJson: ${{ env.Settings }}
           secrets: 'ghTokenWorkflow=${{ env.GHTOKENWORKFLOWSECRETNAME }}'
 
@@ -49,6 +51,7 @@ jobs:
         uses: PooyaKharamesh/AL-Go-Actions/CheckForUpdates@main
         with:
           token: ${{ env.ghTokenWorkflow }}
+          parentTelemetryScope: ${{ needs.initialization.outputs.telemetryScope }}
           update: Y
           templateUrl: ${{ env.TemplateUrl }}
           templateBranch: ${{ env.TemplateBranch }}

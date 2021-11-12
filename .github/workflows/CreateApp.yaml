@@ -26,7 +26,6 @@ jobs:
     runs-on: windows-latest
     outputs:
       telemetryScope: ${{ steps.init.outputs.telemetryScope }}
-      correlationId: ${{ steps.init.outputs.correlationId }}  
     steps:
       - id: init
         uses: PooyaKharamesh/AL-Go-Actions/InitWorkflow@main
@@ -49,6 +48,7 @@ jobs:
       - name: Creating a new app
         uses: PooyaKharamesh/AL-Go-Actions/CreateApp@main
         with:
+          parentTelemetryScope: ${{ needs.initialization.outputs.telemetryScope }}
           type: ${{ env.type }}
           publisher: ${{ github.event.inputs.publisher }}
           name: ${{ github.event.inputs.name }}

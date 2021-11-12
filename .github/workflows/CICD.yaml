@@ -23,7 +23,6 @@ jobs:
     runs-on: windows-latest
     outputs:
       telemetryScope: ${{ steps.init.outputs.telemetryScope }}
-      correlationId: ${{ steps.init.outputs.correlationId }}  
     steps:
       - id: init
         uses: PooyaKharamesh/AL-Go-Actions/InitWorkflow@main
@@ -40,11 +39,13 @@ jobs:
       - name: Read settings
         uses: PooyaKharamesh/AL-Go-Actions/ReadSettings@main
         with:
+          parentTelemetryScope: ${{ needs.initialization.outputs.telemetryScope }}
           get: TemplateUrl,TemplateBranch
 
       - name: Check for updates to AL-Go system files
         uses: PooyaKharamesh/AL-Go-Actions/CheckForUpdates@main
         with:
+          parentTelemetryScope: ${{ needs.initialization.outputs.telemetryScope }}
           templateUrl: ${{ env.TemplateUrl }}
           templateBranch: ${{ env.TemplateBranch }}
   Analyze:
@@ -117,6 +118,7 @@ jobs:
       - name: Read settings
         uses: PooyaKharamesh/AL-Go-Actions/ReadSettings@main
         with:
+          parentTelemetryScope: ${{ needs.initialization.outputs.telemetryScope }}
           project: ${{ matrix.project }}
 
       - name: Read secrets
@@ -124,6 +126,7 @@ jobs:
         env:
           secrets: ${{ toJson(secrets) }}
         with:
+          parentTelemetryScope: ${{ needs.initialization.outputs.telemetryScope }}
           settingsJson: ${{ env.Settings }}
           secrets: 'licenseFileUrl,insiderSasToken,CodeSignCertificateUrl,CodeSignCertificatePassword,KeyVaultCertificateUrl,KeyVaultCertificatePassword,KeyVaultClientId'
 
@@ -184,6 +187,7 @@ jobs:
         if: always()
         uses: PooyaKharamesh/AL-Go-Actions/PipelineCleanup@main
         with:
+          parentTelemetryScope: ${{ needs.initialization.outputs.telemetryScope }}
           Project: ${{ matrix.project }}
   Deploy:
     runs-on: windows-latest
@@ -207,6 +211,7 @@ jobs:
         env:
           authContext: '${{ secrets.AuthContext }}'
         with:
+          parentTelemetryScope: ${{ needs.initialization.outputs.telemetryScope }}     
           type: 'CD'
           projects: '${{ secrets.Projects }}'
           environmentName: ${{ matrix.environment }}
