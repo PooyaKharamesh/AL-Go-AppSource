@@ -1,7 +1,10 @@
 {
     "type": "AppSource App",
     "country": "us",
-    "KeyVaultName": "",
+    "templateUrl": "https://github.com/PooyaKharamesh/AL-Go-AppSource@main",
+    "AppSourceCopMandatoryAffixes": [
+        "<affix>"
+    ],
     "appFolders": [
     ],
     "testFolders": [
